@@ -1,4 +1,22 @@
-export const store = global.store || {
+/* eslint-disable no-var */
+
+// 🧠 Store Type
+type StoreType = {
+  users: string[]
+  menu: any[]
+  finalized: Record<string, any>
+  runner: string | null
+  timeline: any[]
+  history: any[]
+}
+
+// 🌍 Extend globalThis
+declare global {
+  var __lunchStore__: StoreType | undefined
+}
+
+// 🧾 Initial Store Data
+const initialStore: StoreType = {
   users: [],
 
   menu: [
@@ -9,15 +27,15 @@ export const store = global.store || {
   ],
 
   finalized: {},
-
   runner: null,
-
-  history: [],
-
-  lastOrderMessage: null,
-
-  // 🕒 NEW
   timeline: [],
+  history: [],
 }
 
-global.store = store
+// ♻️ Singleton Pattern
+export const store =
+  globalThis.__lunchStore__ ??
+  initialStore
+
+// Save reference
+globalThis.__lunchStore__ = store

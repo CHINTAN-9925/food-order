@@ -1,18 +1,20 @@
 import { store } from "@/lib/store"
-import { NextApiRequest, NextApiResponse } from "next"
+import type {
+  NextApiRequest,
+  NextApiResponse,
+} from "next"
+
+type FinalizeResponse = {
+  success?: boolean
+  error?: string
+}
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<FinalizeResponse>
 ) {
   if (req.method !== "POST") {
     return res.status(405).end()
-  }
-
-  if (store.locked) {
-    return res
-      .status(400)
-      .json({ error: "Order locked" })
   }
 
   const { username, item } = req.body
@@ -27,9 +29,13 @@ export default function handler(
     store.finalized[username] = {}
   }
 
-  store.finalized[username][item.id] = item
+  store.finalized[username][item.id] =
+    item
 
-  console.log("FINALIZED:", store.finalized) // Debug log
+  console.log(
+    "FINALIZED:",
+    store.finalized
+  )
 
   res.json({ success: true })
 }

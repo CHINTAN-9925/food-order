@@ -10,10 +10,12 @@ export default function MenuPage() {
   const [username, setUsername] = useState("")
   const [showPanel, setShowPanel] = useState(false)
 
+  // Load username
   useEffect(() => {
     setUsername(localStorage.getItem("username") || "")
   }, [])
 
+  // Poll shared state
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch("/api/cart")
@@ -27,6 +29,7 @@ export default function MenuPage() {
 
   if (!data) return null
 
+  // Users who ordered
   const notificationCount =
     Object.keys(data.finalized || {}).length
 
@@ -71,6 +74,7 @@ export default function MenuPage() {
             🍽 Lunch Menu
           </h1>
 
+          {/* RUNNER CONTROLS */}
           <RunnerControls
             username={username}
             runner={data.runner}
@@ -78,27 +82,102 @@ export default function MenuPage() {
 
         </div>
 
-        {/* 🌟 MOBILE RUNNER BANNER */}
+        {/* 🌟 MOBILE BLINKING RUNNER BANNER */}
         {data.runner && (
           <div className="sm:hidden relative mb-4">
 
+            {/* Glow */}
             <div className="
-              absolute inset-0 rounded-2xl blur-xl opacity-70
-              bg-gradient-to-r from-green-400 to-emerald-500
+              absolute inset-0
+              rounded-2xl
+              blur-xl
+              opacity-70
+              bg-gradient-to-r
+              from-green-400
+              to-emerald-500
             " />
 
+            {/* Banner */}
             <div className="
-              relative overflow-hidden rounded-2xl p-3
-              text-center shadow-2xl border animate-pulse
+              relative
+              overflow-hidden
+              rounded-2xl
+              p-3
+              text-center
+              shadow-2xl
+              border
+              animate-pulse
               bg-gradient-to-r
-              from-green-600 via-emerald-500 to-green-600
+              from-green-600
+              via-emerald-500
+              to-green-600
             ">
 
+              {/* Shine */}
               <div className="
-                relative z-10 font-bold text-sm
+                absolute inset-0
+                bg-gradient-to-r
+                from-transparent
+                via-white/20
+                to-transparent
+                animate-[shine_3s_linear_infinite]
+              " />
+
+              <div className="
+                relative z-10
+                font-bold text-sm
               ">
-                {data.runner} is getting the food
+                🚴 {data.runner} is getting the food
               </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* 🕒 ACTIVITY TIMELINE */}
+        {data.timeline?.length > 0 && (
+          <div
+            className="
+              mb-4
+              bg-gray-900/70
+              border border-gray-800
+              rounded-2xl
+              p-3
+              shadow
+            "
+          >
+            <h3 className="
+              text-sm font-bold
+              text-yellow-400 mb-2
+            ">
+              🕒 Activity
+            </h3>
+
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+
+              {data.timeline.map((t: any) => (
+                <div
+                  key={t.id}
+                  className="
+                    flex justify-between
+                    text-xs sm:text-sm
+                    bg-gray-800/60
+                    px-3 py-2
+                    rounded-lg
+                  "
+                >
+                  <span>
+                    {t.type === "placed"
+                      ? "📦"
+                      : "🗑"}{" "}
+                    {t.text}
+                  </span>
+
+                  <span className="text-gray-400">
+                    {t.time}
+                  </span>
+                </div>
+              ))}
 
             </div>
           </div>
@@ -131,7 +210,7 @@ export default function MenuPage() {
         <SharedPanel />
       </div>
 
-      {/* 📱 FLOAT BUTTONS — HISTORY + ORDERS */}
+      {/* 📱 FLOAT BUTTONS */}
       <div className="
         lg:hidden
         fixed bottom-4
@@ -141,14 +220,14 @@ export default function MenuPage() {
         z-50
       ">
 
-        {/* HISTORY BUTTON */}
+        {/* HISTORY BUTTON — SAME STYLE */}
         <a
           href="/history"
           className="
             bg-gradient-to-r
-            from-indigo-600
-            to-violet-500
-            text-white
+            from-orange-500
+            to-yellow-400
+            text-black
             font-bold
             px-6 py-3
             rounded-full
@@ -183,7 +262,8 @@ export default function MenuPage() {
             <span
               className="
                 absolute -top-2 -right-2
-                bg-red-600 text-white
+                bg-red-600
+                text-white
                 text-xs font-bold
                 w-6 h-6
                 flex items-center justify-center

@@ -1,6 +1,17 @@
 import { store } from "@/lib/store"
+import type {
+  NextApiRequest,
+  NextApiResponse,
+} from "next"
 
-export default function handler(req, res) {
+type RunnerResponse = {
+  success: boolean
+}
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<RunnerResponse>
+) {
   const { action, user } = req.body
 
   if (action === "assign") {

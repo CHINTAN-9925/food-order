@@ -1,13 +1,23 @@
 import { store } from "@/lib/store"
+import type {
+  NextApiRequest,
+  NextApiResponse,
+} from "next"
 
-export default function handler(req, res) {
+type OrderResponse = {
+  success: boolean
+}
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<OrderResponse>
+) {
   if (!store.runner) {
     return res.json({ success: false })
   }
 
   const runnerName = store.runner
 
-  // 🧾 ARCHIVE CURRENT ORDERS
   const snapshot = {
     id: Date.now(),
     date: new Date().toLocaleDateString(),
@@ -19,16 +29,17 @@ export default function handler(req, res) {
 
   store.history.unshift(snapshot)
 
-  // Keep only last 2 orders
   if (store.history.length > 2) {
     store.history.pop()
   }
 
-  // 🕒 TIMELINE ENTRY
-  const time = new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  })
+  const time = new Date().toLocaleTimeString(
+    [],
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    }
+  )
 
   store.timeline.unshift({
     id: Date.now(),
@@ -37,10 +48,7 @@ export default function handler(req, res) {
     type: "placed",
   })
 
-  // 🧹 CLEAR CURRENT ORDERS
   store.finalized = {}
-
-  // Remove runner
   store.runner = null
 
   res.json({ success: true })
