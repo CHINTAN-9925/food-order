@@ -10,12 +10,10 @@ export default function MenuPage() {
   const [username, setUsername] = useState("")
   const [showPanel, setShowPanel] = useState(false)
 
-  // Load username
   useEffect(() => {
     setUsername(localStorage.getItem("username") || "")
   }, [])
 
-  // Poll shared state
   useEffect(() => {
     const fetchData = async () => {
       const res = await fetch("/api/cart")
@@ -29,171 +27,176 @@ export default function MenuPage() {
 
   if (!data) return null
 
-  // Users who ordered
   const notificationCount =
     Object.keys(data.finalized || {}).length
 
   return (
-    <div
-      className="
-        min-h-screen
-        bg-gradient-to-br
-        from-gray-900
-        via-gray-950
-        to-black
-        text-white
-        flex flex-col lg:flex-row
-      "
-    >
+    <div className="
+      min-h-screen
+      bg-gradient-to-br
+      from-gray-900
+      via-gray-950
+      to-black
+      text-white
+      flex flex-col lg:flex-row
+    ">
 
-      {/* LEFT — MENU */}
-      <div className="flex-1 px-3 py-4 sm:px-6">
+      {/* LEFT */}
+      <div className="
+        flex-1
+        px-3 py-4 sm:px-6
+        pb-32
+        overflow-y-auto
+      ">
 
         {/* HEADER */}
-        <div
-          className="
-            sticky top-0 z-40
-            backdrop-blur-md
-            bg-gray-900/80
-            border border-gray-800
-            rounded-2xl
-            p-3 sm:p-4
-            shadow-xl
-            mb-4
-          "
-        >
-
-          <h1
-            className="
-              text-lg sm:text-2xl
-              font-extrabold
-              text-yellow-400
-              mb-2
-            "
-          >
+        <div className="
+          sticky top-0 z-40
+          backdrop-blur-md
+          bg-gray-900/80
+          border border-gray-800
+          rounded-2xl
+          p-3 sm:p-4
+          shadow-xl
+          mb-6
+        ">
+          <h1 className="
+            text-lg sm:text-2xl
+            font-extrabold
+            text-yellow-400
+            mb-2
+          ">
             🍽 Lunch Menu
           </h1>
 
-          {/* RUNNER CONTROLS */}
           <RunnerControls
             username={username}
             runner={data.runner}
           />
-
         </div>
 
-        {/* 🌟 MOBILE BLINKING RUNNER BANNER */}
+        {/* RUNNER BANNER */}
         {data.runner && (
-          <div className="sm:hidden relative mb-4">
+          <div className="relative mb-8">
 
-            {/* Glow */}
             <div className="
               absolute inset-0
-              rounded-2xl
-              blur-xl
+              rounded-2xl blur-xl
               opacity-70
               bg-gradient-to-r
               from-green-400
               to-emerald-500
             " />
 
-            {/* Banner */}
             <div className="
-              relative
-              overflow-hidden
-              rounded-2xl
-              p-3
-              text-center
-              shadow-2xl
-              border
+              relative rounded-2xl
+              p-3 text-center
+              shadow-2xl border
               animate-pulse
               bg-gradient-to-r
               from-green-600
               via-emerald-500
               to-green-600
             ">
+              🚴 {data.runner} is getting the food
+            </div>
 
-              {/* Shine */}
+          </div>
+        )}
+
+        {/* TIMELINE */}
+        {data.timeline?.length > 0 && (
+          <div className="
+            mt-10
+            bg-gradient-to-b
+            from-gray-900
+            to-black
+            border border-gray-800
+            rounded-2xl
+            p-5
+            shadow-xl
+            mb-6
+          ">
+
+            <h2 className="
+              text-yellow-400
+              font-bold text-lg
+              mb-6
+            ">
+              🕒 Activity Timeline
+            </h2>
+
+            <div className="relative">
+
               <div className="
-                absolute inset-0
-                bg-gradient-to-r
-                from-transparent
-                via-white/20
-                to-transparent
-                animate-[shine_3s_linear_infinite]
+                absolute left-[9px] top-0
+                w-[2px] h-full
+                bg-gray-700
               " />
 
-              <div className="
-                relative z-10
-                font-bold text-sm
-              ">
-                🚴 {data.runner} is getting the food
+              <div className="space-y-6">
+
+                {data.timeline.map((t: any) => {
+
+                  const dotColor =
+                    t.type === "withdraw"
+                      ? "bg-red-500"
+                      : "bg-white"
+
+                  return (
+                    <div
+                      key={t.id}
+                      className="flex items-start gap-4"
+                    >
+
+                      <div className={`
+                        relative z-10
+                        w-5 h-5 mt-2
+                        rounded-full
+                        ${dotColor}
+                        border-2 border-gray-900
+                      `} />
+
+                      <div className="
+                        flex-1
+                        bg-gray-800/60
+                        px-4 py-3
+                        rounded-xl
+                        border border-gray-700
+                      ">
+                        <div className="
+                          flex justify-between
+                          text-sm sm:text-base
+                        ">
+                          <span>{t.text}</span>
+                          <span className="
+                            text-gray-400
+                            text-xs sm:text-sm
+                          ">
+                            {t.time}
+                          </span>
+                        </div>
+                      </div>
+
+                    </div>
+                  )
+                })}
+
               </div>
 
             </div>
           </div>
         )}
 
-        {/* 🕒 ACTIVITY TIMELINE */}
-        {data.timeline?.length > 0 && (
-          <div
-            className="
-              mb-4
-              bg-gray-900/70
-              border border-gray-800
-              rounded-2xl
-              p-3
-              shadow
-            "
-          >
-            <h3 className="
-              text-sm font-bold
-              text-yellow-400 mb-2
-            ">
-              🕒 Activity
-            </h3>
-
-            <div className="space-y-2 max-h-32 overflow-y-auto">
-
-              {data.timeline.map((t: any) => (
-                <div
-                  key={t.id}
-                  className="
-                    flex justify-between
-                    text-xs sm:text-sm
-                    bg-gray-800/60
-                    px-3 py-2
-                    rounded-lg
-                  "
-                >
-                  <span>
-                    {t.type === "placed"
-                      ? "📦"
-                      : "🗑"}{" "}
-                    {t.text}
-                  </span>
-
-                  <span className="text-gray-400">
-                    {t.time}
-                  </span>
-                </div>
-              ))}
-
-            </div>
-          </div>
-        )}
-
         {/* FOOD GRID */}
-        <div
-          className="
-            grid
-            grid-cols-2
-            sm:grid-cols-2
-            md:grid-cols-3
-            lg:grid-cols-4
-            gap-3 sm:gap-5
-          "
-        >
+        <div className="
+          grid
+          grid-cols-2
+          sm:grid-cols-2
+          md:grid-cols-3
+          lg:grid-cols-4
+          gap-3 sm:gap-5
+        ">
           {data.menu.map((item: any) => (
             <FoodCard
               key={item.id}
@@ -210,36 +213,27 @@ export default function MenuPage() {
         <SharedPanel />
       </div>
 
-      {/* 📱 FLOAT BUTTONS */}
+      {/* FLOAT BUTTONS */}
       <div className="
-        lg:hidden
-        fixed bottom-4
-        left-0 right-0
-        px-4
-        flex justify-between
-        z-50
+        lg:hidden fixed bottom-4
+        left-0 right-0 px-4
+        flex justify-between z-50
       ">
 
-        {/* HISTORY BUTTON — SAME STYLE */}
         <a
           href="/history"
           className="
             bg-gradient-to-r
             from-orange-500
             to-yellow-400
-            text-black
-            font-bold
+            text-black font-bold
             px-6 py-3
-            rounded-full
-            shadow-2xl
-            active:scale-95
-            transition
+            rounded-full shadow-2xl
           "
         >
           History
         </a>
 
-        {/* ORDERS BUTTON */}
         <button
           onClick={() => setShowPanel(true)}
           className="
@@ -247,30 +241,22 @@ export default function MenuPage() {
             bg-gradient-to-r
             from-orange-500
             to-yellow-400
-            text-black
-            font-bold
+            text-black font-bold
             px-6 py-3
-            rounded-full
-            shadow-2xl
-            active:scale-95
-            transition
+            rounded-full shadow-2xl
           "
         >
           Orders
 
           {notificationCount > 0 && (
-            <span
-              className="
-                absolute -top-2 -right-2
-                bg-red-600
-                text-white
-                text-xs font-bold
-                w-6 h-6
-                flex items-center justify-center
-                rounded-full
-                border-2 border-black
-              "
-            >
+            <span className="
+              absolute -top-2 -right-2
+              bg-red-600 text-white
+              text-xs font-bold
+              w-6 h-6 flex
+              items-center justify-center
+              rounded-full
+            ">
               {notificationCount}
             </span>
           )}
@@ -278,41 +264,50 @@ export default function MenuPage() {
 
       </div>
 
-      {/* 📱 MOBILE DRAWER */}
+      {/* MOBILE DRAWER */}
       {showPanel && (
-        <div
-          className="
-            fixed inset-0
-            bg-black/60
-            z-50
-            flex items-end
-          "
-        >
-          <div
-            className="
-              bg-gray-900
-              w-full
-              max-h-[85vh]
-              rounded-t-2xl
-              p-4
-              overflow-y-auto
-            "
-          >
+        <div className="
+          fixed inset-0
+          bg-black/60
+          z-50 flex items-end
+        ">
+          <div className="
+            bg-gray-900 w-full
+            max-h-[85vh]
+            rounded-t-2xl
+            overflow-y-scroll
+            scrollbar-hide
+          ">
 
-            <div className="flex justify-between mb-3">
+            {/* HEADER */}
+            <div className="
+              flex justify-between
+              items-center
+              p-4
+              border-b border-gray-800
+              sticky top-0
+              bg-gray-900
+            ">
               <h2 className="font-bold text-yellow-400">
                 Orders
               </h2>
 
               <button
-                onClick={() => setShowPanel(false)}
-                className="text-red-400"
+                onClick={() =>
+                  setShowPanel(false)
+                }
+                className="
+                  text-red-500
+                  font-semibold
+                "
               >
                 Close
               </button>
             </div>
 
-            <SharedPanel />
+            <div className="p-4">
+              <SharedPanel />
+            </div>
 
           </div>
         </div>

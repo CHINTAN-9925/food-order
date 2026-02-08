@@ -8,7 +8,8 @@ export default function RunnerControls({
   runner,
 }: any) {
   const [toast, setToast] = useState("")
-  const [showToast, setShowToast] = useState(false)
+  const [showToast, setShowToast] =
+    useState(false)
 
   const show = (msg: string) => {
     setToast(msg)
@@ -18,39 +19,54 @@ export default function RunnerControls({
   const callApi = async (
     url: string,
     body?: any,
-    toastMsg?: string
+    msg?: string
   ) => {
     await fetch(url, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type":
+          "application/json",
       },
-      body: body ? JSON.stringify(body) : undefined,
+      body: body
+        ? JSON.stringify(body)
+        : undefined,
     })
 
-    if (toastMsg) show(toastMsg)
+    if (msg) show(msg)
   }
 
+  // Assign runner
   const assignRunner = () =>
     callApi("/api/runner", {
       action: "assign",
       user: username,
     })
 
+  // Withdraw runner
   const withdrawRunner = () =>
     callApi("/api/runner", {
       action: "withdraw",
       user: username,
     })
 
+  // ✅ PLACE ORDER — FIXED API
+  const placeOrder = () =>
+    callApi(
+      "/api/order", // ← Correct endpoint
+      null,
+      "Order placed"
+    )
+
+  // Clear orders
   const clearOrders = () =>
     callApi(
       "/api/reset",
       null,
-      "All orders cleared"
+      "Orders cleared"
     )
 
-  const isRunner = runner === username
+  const isRunner =
+    runner === username
   const someoneElseRunner =
     runner && !isRunner
 
@@ -58,46 +74,26 @@ export default function RunnerControls({
     <>
       <div
         className="
-          grid
-          grid-cols-1
-          sm:flex
-          gap-3
-          w-full
+          grid grid-cols-1
+          sm:flex gap-3 w-full
         "
       >
 
-        {/* ASSIGN BUTTON */}
+        {/* I AM GETTING FOOD */}
         <button
           disabled={someoneElseRunner}
           onClick={assignRunner}
-          title={
-            someoneElseRunner
-              ? `${runner} is getting the food`
-              : ""
-          }
           className={`
             w-full sm:w-auto
             px-5 py-3
             rounded-md
             font-semibold
-            border
-            shadow
-            transition-all
+            transition
 
             ${
               someoneElseRunner
-                ? `
-                  bg-gray-800
-                  border-gray-700
-                  text-gray-500
-                  cursor-not-allowed
-                `
-                : `
-                  bg-gradient-to-r
-                  from-orange-500 to-amber-400
-                  text-black
-                  hover:scale-[1.02]
-                `
+                ? "bg-gray-700 text-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-orange-500 to-yellow-400 text-black"
             }
           `}
         >
@@ -107,6 +103,7 @@ export default function RunnerControls({
         {/* RUNNER CONTROLS */}
         {isRunner && (
           <>
+            {/* Withdraw */}
             <button
               onClick={withdrawRunner}
               className="
@@ -114,15 +111,27 @@ export default function RunnerControls({
                 px-5 py-3
                 rounded-md
                 font-semibold
-                bg-gradient-to-r
-                from-red-600 to-rose-500
-                shadow
-                hover:scale-[1.02]
+                bg-red-600
               "
             >
               Withdraw
             </button>
 
+            {/* Place Order */}
+            <button
+              onClick={placeOrder}
+              className="
+                w-full sm:w-auto
+                px-5 py-3
+                rounded-md
+                font-semibold
+                bg-green-600
+              "
+            >
+              Place Order
+            </button>
+
+            {/* Clear Orders */}
             <button
               onClick={clearOrders}
               className="
@@ -130,24 +139,22 @@ export default function RunnerControls({
                 px-5 py-3
                 rounded-md
                 font-semibold
-                bg-gradient-to-r
-                from-indigo-600 to-violet-500
-                shadow
-                hover:scale-[1.02]
+                bg-indigo-600
               "
             >
               Clear Today’s Orders
             </button>
           </>
         )}
-
       </div>
 
-      {/* TOAST */}
+      {/* Toast */}
       <Toast
         message={toast}
         show={showToast}
-        onClose={() => setShowToast(false)}
+        onClose={() =>
+          setShowToast(false)
+        }
       />
     </>
   )

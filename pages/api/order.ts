@@ -18,21 +18,7 @@ export default function handler(
 
   const runnerName = store.runner
 
-  const snapshot = {
-    id: Date.now(),
-    date: new Date().toLocaleDateString(),
-    finalized: JSON.parse(
-      JSON.stringify(store.finalized)
-    ),
-    runner: runnerName,
-  }
-
-  store.history.unshift(snapshot)
-
-  if (store.history.length > 2) {
-    store.history.pop()
-  }
-
+  // 🕒 Timestamp
   const time = new Date().toLocaleTimeString(
     [],
     {
@@ -41,15 +27,13 @@ export default function handler(
     }
   )
 
+  // ✅ ONLY ACTIVITY — NO CLEARING
   store.timeline.unshift({
     id: Date.now(),
-    text: `${runnerName} placed the lunch order`,
+    text: `Order is placed by ${runnerName}`,
     time,
     type: "placed",
   })
-
-  store.finalized = {}
-  store.runner = null
 
   res.json({ success: true })
 }
